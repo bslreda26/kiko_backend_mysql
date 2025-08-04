@@ -1,0 +1,175 @@
+BACKEND API INFORMATION
+
+======================
+BASE URL
+======================
+Development: http://localhost:3333 (default AdonisJS port)
+Production: Set via HOST and PORT environment variables
+The server uses the HOST and PORT from your environment configuration
+
+======================
+API ROUTES
+======================
+
+Health Check:
+GET / 
+Returns: { "hello": "world" }
+
+Collection Routes (/api/collections):
+POST /api/collections - Create collection
+GET /api/collections - Get all collections
+GET /api/collections/search?name=searchTerm - Search collections by name
+GET /api/collections/with-products - Get collections with their products
+GET /api/collections/:id - Get collection by ID
+GET /api/collections/:id/stats - Get collection statistics
+PUT /api/collections/:id - Update collection
+DELETE /api/collections/:id - Delete collection
+
+Product Routes (/api/products):
+POST /api/products - Create product
+GET /api/products - Get all products
+GET /api/products/search?minPrice=100&maxPrice=500&collectionId=1&title=searchTerm - Search products
+GET /api/products/by-price-range?minPrice=100&maxPrice=500 - Get products by price range
+GET /api/products/by-collection/:collectionId - Get products by collection
+GET /api/products/:id - Get product by ID
+PUT /api/products/:id - Update product
+DELETE /api/products/:id - Delete product
+
+Authentication Routes:
+NOTE: No authentication routes are currently implemented in your routes file, but the auth system is configured. You may need to add routes like:
+POST /login - User login
+POST /register - User registration  
+POST /logout - User logout
+GET /me - Get authenticated user info
+
+======================
+AUTHENTICATION METHOD
+======================
+Type: Session-based authentication with cookies
+Guard: Uses 'web' guard with session storage
+Cookies: HTTP-only, secure in production, SameSite: 'lax'
+Password Hashing: Scrypt algorithm
+User Identification: Email-based
+
+======================
+DATA STRUCTURES
+======================
+
+Product Object:
+{
+  "id": 1,
+  "title": "Product Title",
+  "description": "Product description",
+  "image": "image-url.jpg",
+  "dimensions": "{\"width\": 10, \"height\": 15, \"depth\": 5}",
+  "price": 299.99,
+  "collectionId": 1,
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "updatedAt": "2024-01-15T10:30:00.000Z",
+  "collection": { /* Collection object */ }
+}
+
+Collection Object:
+{
+  "id": 1,
+  "name": "Collection Name",
+  "description": "Collection description",
+  "images": "[\"image1.jpg\", \"image2.jpg\"]",
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "updatedAt": "2024-01-15T10:30:00.000Z",
+  "products": [ /* Array of Product objects */ ]
+}
+
+User Object:
+{
+  "id": 1,
+  "fullName": "User Full Name",
+  "email": "user@example.com",
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "updatedAt": "2024-01-15T10:30:00.000Z"
+}
+
+Error Response Format:
+{
+  "message": "Error description",
+  "error": "Detailed error message"
+}
+
+======================
+CORS CONFIGURATION
+======================
+Enabled: Yes
+Origin: All origins allowed (true)
+Methods: GET, HEAD, POST, PUT, DELETE
+Credentials: Enabled (required for session auth)
+Headers: All headers allowed
+
+======================
+REQUEST/RESPONSE FORMAT
+======================
+Content-Type: application/json
+All requests and responses use JSON format
+
+======================
+TEST CREDENTIALS
+======================
+Email: admin@example.com
+Password: password123
+
+======================
+ENVIRONMENT SETUP
+======================
+Your backend requires these environment variables:
+PORT - Server port
+HOST - Server host
+APP_KEY - Application encryption key
+DB_* - Database configuration
+SESSION_DRIVER - Session storage method
+
+======================
+NOTES FOR FRONTEND INTEGRATION
+======================
+1. Authentication: Implement session-based auth with cookies
+2. CSRF: May need CSRF token handling (check if enabled)
+3. File Uploads: Image fields expect URLs (no file upload endpoints visible)
+4. Relationships: Products belong to collections, use collectionId for association
+5. Search: Multiple search parameters supported via query strings
+6. Error Handling: Check response status codes and handle error messages appropriately
+
+======================
+CREATE PRODUCT REQUEST BODY EXAMPLE
+======================
+{
+  "title": "Product Name",
+  "description": "Product description",
+  "image": "image-url.jpg",
+  "dimensions": "{\"width\": 10, \"height\": 15, \"depth\": 5}",
+  "price": 299.99,
+  "collectionId": 1
+}
+
+======================
+CREATE COLLECTION REQUEST BODY EXAMPLE
+======================
+{
+  "name": "Collection Name",
+  "description": "Collection description",
+  "images": "[\"image1.jpg\", \"image2.jpg\"]"
+}
+
+======================
+SEARCH PRODUCT QUERY PARAMETERS
+======================
+minPrice: number (optional)
+maxPrice: number (optional)
+collectionId: number (optional)
+title: string (optional)
+
+Example: /api/products/search?minPrice=100&maxPrice=500&collectionId=1&title=chair
+
+======================
+SEARCH COLLECTION QUERY PARAMETERS
+======================
+name: string (optional)
+
+Example: /api/collections/search?name=furniture
