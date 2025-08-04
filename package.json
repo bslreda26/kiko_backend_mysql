@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20.6.0"
+  },
   "license": "UNLICENSED",
   "scripts": {
     "start": "node ace serve --watch",
@@ -13,8 +16,7 @@
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "migrate": "node ace migration:run",
-    "seed": "node ace db:seed",
-    "postinstall": "node ace build --production"
+    "seed": "node ace db:seed"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",
