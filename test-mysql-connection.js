@@ -6,13 +6,25 @@ config()
 
 async function testConnection() {
   try {
-    const connection = await mysql.createConnection({
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT) || 3306,
-      user: process.env.DB_USER || 'root',
-      password: process.env.DB_PASSWORD || '',
-      database: process.env.DB_DATABASE || 'kikobackend'
-    })
+    let connectionConfig
+    
+    if (process.env.MYSQL_URL) {
+      // Use the connection string
+      console.log('🔗 Using MYSQL_URL connection string')
+      connectionConfig = process.env.MYSQL_URL
+    } else {
+      // Use individual parameters
+      console.log('🔗 Using individual connection parameters')
+      connectionConfig = {
+        host: process.env.DB_HOST || 'localhost',
+        port: parseInt(process.env.DB_PORT) || 3306,
+        user: process.env.DB_USER || 'root',
+        password: process.env.DB_PASSWORD || '',
+        database: process.env.DB_DATABASE || 'kikobackend'
+      }
+    }
+
+    const connection = await mysql.createConnection(connectionConfig)
 
     console.log('✅ MySQL connection successful!')
     
@@ -29,10 +41,15 @@ async function testConnection() {
     console.log('3. Ensure the database exists')
     console.log('4. Verify the user has proper permissions')
     console.log('\nCurrent connection settings:')
-    console.log(`Host: ${process.env.DB_HOST || 'localhost'}`)
-    console.log(`Port: ${process.env.DB_PORT || 3306}`)
-    console.log(`User: ${process.env.DB_USER || 'root'}`)
-    console.log(`Database: ${process.env.DB_DATABASE || 'kikobackend'}`)
+    
+    if (process.env.MYSQL_URL) {
+      console.log(`MYSQL_URL: ${process.env.MYSQL_URL.replace(/\/\/.*@/, '//***:***@')}`) // Hide credentials
+    } else {
+      console.log(`Host: ${process.env.DB_HOST || 'localhost'}`)
+      console.log(`Port: ${process.env.DB_PORT || 3306}`)
+      console.log(`User: ${process.env.DB_USER || 'root'}`)
+      console.log(`Database: ${process.env.DB_DATABASE || 'kikobackend'}`)
+    }
   }
 }
 
