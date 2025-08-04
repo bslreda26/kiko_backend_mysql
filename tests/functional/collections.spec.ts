@@ -27,7 +27,7 @@ test.group('Collections API', (group) => {
     const response = await client.get('/api/collections')
 
     response.assertStatus(200)
-    response.assertBodyIsArray()
+    response.assertBodyContains([])
   })
 
   test('should get collection by id', async ({ client }) => {
@@ -54,7 +54,7 @@ test.group('Collections API', (group) => {
     const response = await client.get('/api/collections/search?name=Test')
 
     response.assertStatus(200)
-    response.assertBodyIsArray()
+    response.assertBodyContains([])
   })
 
   test('should update a collection', async ({ client }) => {

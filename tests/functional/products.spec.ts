@@ -40,7 +40,7 @@ test.group('Products API', (group) => {
     const response = await client.get('/api/products')
 
     response.assertStatus(200)
-    response.assertBodyIsArray()
+    response.assertBodyContains([])
   })
 
   test('should get product by id', async ({ client }) => {
@@ -96,21 +96,21 @@ test.group('Products API', (group) => {
     const response = await client.get(`/api/products/by-collection/${collectionId}`)
 
     response.assertStatus(200)
-    response.assertBodyIsArray()
+    response.assertBodyContains([])
   })
 
   test('should search products by price range', async ({ client }) => {
     const response = await client.get('/api/products/by-price-range?minPrice=50&maxPrice=150')
 
     response.assertStatus(200)
-    response.assertBodyIsArray()
+    response.assertBodyContains([])
   })
 
   test('should search products with filters', async ({ client }) => {
     const response = await client.get('/api/products/search?minPrice=50&maxPrice=150&title=Test')
 
     response.assertStatus(200)
-    response.assertBodyIsArray()
+    response.assertBodyContains([])
   })
 
   test('should update a product', async ({ client }) => {

@@ -58,7 +58,9 @@ export default class CollectionService {
   }
 
   async getCollectionsWithProducts() {
-    const collections = await Collection.query().preload('products').whereHas('products')
+    const collections = await Collection.query().preload('products').whereHas('products', (query) => {
+      query.whereNotNull('id')
+    })
     return collections
   }
 
