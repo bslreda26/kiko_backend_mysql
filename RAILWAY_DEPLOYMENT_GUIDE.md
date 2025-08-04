@@ -45,7 +45,23 @@ In your Railway dashboard, set these environment variables:
 3. **Set the environment variables** as shown above
 4. **Deploy your application**
 
-### 3. Testing on Railway
+### 3. Railway Build Configuration
+
+**Important**: Railway needs to run migrations during deployment. Add this to your Railway project settings:
+
+1. Go to your Railway project dashboard
+2. Navigate to your app service
+3. Go to **Settings** → **Build & Deploy**
+4. Set the **Build Command** to:
+   ```bash
+   npm run build
+   ```
+5. Set the **Start Command** to:
+   ```bash
+   npm start
+   ```
+
+### 4. Testing on Railway
 
 After deployment, test your Railway app:
 
@@ -59,6 +75,19 @@ curl https://your-railway-app.railway.app/api/collections
 # Test the products API
 curl https://your-railway-app.railway.app/api/products
 ```
+
+### 5. Manual Migration (if needed)
+
+If tables still don't appear, you can manually run migrations:
+
+1. Go to your Railway project dashboard
+2. Navigate to your app service
+3. Go to **Deployments** → **Latest Deployment**
+4. Click on the deployment and go to **Logs**
+5. Open a terminal in the deployment and run:
+   ```bash
+   node ace migration:run --force
+   ```
 
 ## Configuration Files
 
@@ -126,4 +155,20 @@ SESSION_DRIVER=cookie
 ### Common Errors
 - `EnvValidationException`: Missing required environment variables
 - `ECONNREFUSED`: Database connection failed
-- `ER_ACCESS_DENIED_ERROR`: Wrong database credentials 
+- `ER_ACCESS_DENIED_ERROR`: Wrong database credentials
+
+### Tables Not Appearing in Railway
+
+If your tables work locally but don't appear in Railway:
+
+1. **Check if migrations ran**: Look at Railway deployment logs for migration messages
+2. **Manual migration**: Run `node ace migration:run --force` in Railway terminal
+3. **Verify database connection**: Ensure `MYSQL_URL` is properly set in Railway environment variables
+4. **Check database permissions**: Railway MySQL should have full permissions by default
+5. **Re-deploy with build command**: Make sure your Railway project uses `npm run build` as the build command
+
+**Quick Fix**: If tables are missing, SSH into your Railway deployment and run:
+```bash
+node ace migration:run --force
+node ace db:seed  # if you want to seed data
+``` 

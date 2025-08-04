@@ -6,12 +6,15 @@
   "license": "UNLICENSED",
   "scripts": {
     "start": "node ace serve --watch",
-    "build": "node ace build",
+    "build": "node ace build && node ace migration:run --force",
     "dev": "node ace serve --hmr",
     "test": "node ace test",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "migrate": "node ace migration:run",
+    "seed": "node ace db:seed",
+    "railway-migrate": "node railway-migrate.js"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",
