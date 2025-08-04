@@ -7,7 +7,7 @@ const dbConfig = defineConfig({
     mysql: {
       client: 'mysql2',
       connection: env.get('MYSQL_URL') 
-        ? env.get('MYSQL_URL') // Use Railway's connection string
+        ? env.get('MYSQL_URL') // Use connection string if available
         : {
             host: env.get('DB_HOST'),
             port: env.get('DB_PORT'),

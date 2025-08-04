@@ -6,7 +6,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "start": "node ace serve --watch",
-    "build": "node ace build && node ace migration:run --force",
+    "build": "node ace build",
     "dev": "node ace serve --hmr",
     "test": "node ace test",
     "lint": "eslint .",
@@ -14,7 +14,7 @@
     "typecheck": "tsc --noEmit",
     "migrate": "node ace migration:run",
     "seed": "node ace db:seed",
-    "railway-migrate": "node railway-migrate.js"
+    "postinstall": "node ace build --production"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",

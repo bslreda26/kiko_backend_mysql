@@ -32,7 +32,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   
   /*
   |----------------------------------------------------------
-  | Railway MySQL connection string
+  | MySQL connection string (optional)
   |----------------------------------------------------------
   */
   MYSQL_URL: Env.schema.string.optional(),
