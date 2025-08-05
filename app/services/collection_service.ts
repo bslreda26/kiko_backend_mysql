@@ -68,7 +68,7 @@ export default class CollectionService {
     const collection = await Collection.query().where('id', id).preload('products').firstOrFail()
 
     const totalProducts = collection.products.length
-    const totalValue = collection.products.reduce((sum, product) => sum + product.price, 0)
+    const totalValue = collection.products.reduce((sum, product) => sum + (product.price || 0), 0)
     const averagePrice = totalProducts > 0 ? totalValue / totalProducts : 0
 
     return {
