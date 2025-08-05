@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {

@@ -51,21 +51,10 @@ export default class Product extends BaseModel {
   declare dimensions: object // JSON object with width, height, depth
 
   @column()
-  declare price: number | null
+  declare price: number
 
   @column()
   declare collectionId: number
-
-  @column({
-   
-    serialize: (value: any) => {
-      return Boolean(value)
-    },
-    prepare: (value: any) => {
-      return Boolean(value)
-    }
-  })
-  declare isAvailable: boolean
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

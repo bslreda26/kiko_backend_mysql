@@ -20,7 +20,6 @@ export default class extends BaseSeeder {
         }),
         price: 1299.99,
         collection_id: 1, // Modern Furniture
-        isAvailable: true,
         created_at: now,
         updated_at: now,
       },
@@ -38,7 +37,6 @@ export default class extends BaseSeeder {
         }),
         price: 899.99,
         collection_id: 2, // Vintage Collection
-        isAvailable: true,
         created_at: now,
         updated_at: now,
       },
@@ -56,7 +54,6 @@ export default class extends BaseSeeder {
         }),
         price: 299.99,
         collection_id: 3, // Office Essentials
-        isAvailable: true,
         created_at: now,
         updated_at: now,
       },
@@ -74,7 +71,6 @@ export default class extends BaseSeeder {
         }),
         price: 599.99,
         collection_id: 4, // Outdoor Living
-        isAvailable: true,
         created_at: now,
         updated_at: now,
       },
@@ -92,7 +88,6 @@ export default class extends BaseSeeder {
         }),
         price: 199.99,
         collection_id: 1, // Modern Furniture
-        isAvailable: true,
         created_at: now,
         updated_at: now,
       },
@@ -110,7 +105,6 @@ export default class extends BaseSeeder {
         }),
         price: 449.99,
         collection_id: 2, // Vintage Collection
-        isAvailable: false,
         created_at: now,
         updated_at: now,
       },
@@ -128,7 +122,6 @@ export default class extends BaseSeeder {
         }),
         price: 399.99,
         collection_id: 3, // Office Essentials
-        isAvailable: true,
         created_at: now,
         updated_at: now,
       },
@@ -146,7 +139,6 @@ export default class extends BaseSeeder {
         }),
         price: 149.99,
         collection_id: 4, // Outdoor Living
-        isAvailable: true,
         created_at: now,
         updated_at: now,
       },
