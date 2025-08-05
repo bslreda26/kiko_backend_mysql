@@ -1,22 +1,15 @@
+/* eslint-disable prettier/prettier */
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'products'
+  protected tableName = 'collections'
 
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').notNullable()
-      table.string('title').notNullable()
+      table.string('name').notNullable()
       table.text('description').nullable()
-      table.string('image').nullable()
-      table.text('dimensions').nullable() // JSON object with width, height, depth
-      table.decimal('price', 10, 2).notNullable()
-      table
-        .integer('collection_id')
-        .unsigned()
-        .references('id')
-        .inTable('collections')
-        .onDelete('CASCADE')
+      table.text('images').nullable() // JSON array of image URLs
 
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()

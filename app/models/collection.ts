@@ -13,8 +13,23 @@ export default class Collection extends BaseModel {
   @column()
   declare description: string
 
-  @column()
-  declare images: string // JSON array of image URLs
+  @column({
+    serialize: (value: string) => {
+      if (!value) return []
+      try {
+        return JSON.parse(value)
+      } catch {
+        return []
+      }
+    },
+    prepare: (value: any) => {
+      if (Array.isArray(value)) {
+        return JSON.stringify(value)
+      }
+      return value
+    }
+  })
+  declare images: string[] // JSON array of image URLs
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

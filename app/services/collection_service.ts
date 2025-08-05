@@ -4,7 +4,7 @@ import { inject } from '@adonisjs/core'
 interface CollectionData {
   name: string
   description: string
-  images: string // JSON array of image URLs
+  images: string[] // Array of image URLs
 }
 
 interface SearchOptions {

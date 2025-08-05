@@ -15,7 +15,13 @@ export default class ProductController {
         'dimensions',
         'price',
         'collectionId',
+        'isAvailable',
       ])
+
+      // Convert isAvailable to boolean if it exists
+      if (data.isAvailable !== undefined) {
+        data.isAvailable = Boolean(data.isAvailable)
+      }
 
       // Basic validation for base64 image format
       if (data.image && !this.isValidBase64Image(data.image)) {
@@ -50,7 +56,13 @@ export default class ProductController {
         'dimensions',
         'price',
         'collectionId',
+        'isAvailable',
       ])
+
+      // Convert isAvailable to boolean if it exists
+      if (data.isAvailable !== undefined) {
+        data.isAvailable = Boolean(data.isAvailable)
+      }
 
       // Basic validation for base64 image format
       if (data.image && !this.isValidBase64Image(data.image)) {
@@ -161,6 +173,43 @@ export default class ProductController {
     } catch (error) {
       return response.internalServerError({
         message: 'Failed to fetch products by price range',
+        error: error.message,
+      })
+    }
+  }
+
+  async getAvailable({ response }: HttpContext) {
+    try {
+      const products = await this.productService.getAvailableProducts()
+      return response.ok(products)
+    } catch (error) {
+      return response.internalServerError({
+        message: 'Failed to fetch available products',
+        error: error.message,
+      })
+    }
+  }
+
+  async getUnavailable({ response }: HttpContext) {
+    try {
+      const products = await this.productService.getUnavailableProducts()
+      return response.ok(products)
+    } catch (error) {
+      return response.internalServerError({
+        message: 'Failed to fetch unavailable products',
+        error: error.message,
+      })
+    }
+  }
+
+  async toggleAvailability({ params, response }: HttpContext) {
+    try {
+      const { id } = params
+      const product = await this.productService.toggleProductAvailability(Number.parseInt(id))
+      return response.ok(product)
+    } catch (error) {
+      return response.internalServerError({
+        message: 'Failed to toggle product availability',
         error: error.message,
       })
     }

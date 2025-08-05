@@ -4,10 +4,11 @@ import { inject } from '@adonisjs/core'
 interface ProductData {
   title: string
   description: string
-  image: string
-  dimensions: string
-  price: number
+  image: string | object
+  dimensions: object
+  price?: number | null
   collectionId: number
+  isAvailable?: boolean
 }
 
 interface SearchOptions {
@@ -88,5 +89,23 @@ export default class ProductService {
       .where('price', '<=', maxPrice)
       .preload('collection')
     return products
+  }
+
+  async getAvailableProducts() {
+    const products = await Product.query().where('isAvailable', true).preload('collection')
+    return products
+  }
+
+  async getUnavailableProducts() {
+    const products = await Product.query().where('isAvailable', false).preload('collection')
+    return products
+  }
+
+  async toggleProductAvailability(id: number) {
+    const product = await Product.findOrFail(id)
+    product.isAvailable = !product.isAvailable
+    await product.save()
+    await product.load('collection')
+    return product
   }
 }

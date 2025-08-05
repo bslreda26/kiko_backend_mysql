@@ -40,9 +40,13 @@ SESSION_DRIVER=cookie
 ```
 
 ### Database Variables:
-Railway will automatically provide:
+You need to set these individually (Railway MySQL service will provide these):
 ```
-MYSQL_URL=mysql://user:password@host:port/database
+DB_HOST=your-mysql-host
+DB_PORT=3306
+DB_USER=your-mysql-user
+DB_PASSWORD=your-mysql-password
+DB_DATABASE=your-mysql-database
 ```
 
 ## Step 4: Generate APP_KEY
@@ -85,7 +89,11 @@ railway run npm run seed
 | PORT | Port number (Railway sets this) | Yes |
 | APP_KEY | Application encryption key | Yes |
 | LOG_LEVEL | Logging level | Yes |
-| MYSQL_URL | MySQL connection string | Yes (Railway provides) |
+| DB_HOST | MySQL host | Yes (Railway provides) |
+| DB_PORT | MySQL port (usually 3306) | Yes (Railway provides) |
+| DB_USER | MySQL username | Yes (Railway provides) |
+| DB_PASSWORD | MySQL password | Yes (Railway provides) |
+| DB_DATABASE | MySQL database name | Yes (Railway provides) |
 | SESSION_DRIVER | Session storage (cookie) | Yes |
 
 ## Troubleshooting
