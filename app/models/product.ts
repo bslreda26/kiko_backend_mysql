@@ -60,7 +60,7 @@ export default class Product extends BaseModel {
   @column()
   declare price: number
 
-  @column()
+  @column({ columnName: 'collection_id' })
   declare collectionId: number
 
   @column.dateTime({ autoCreate: true })
