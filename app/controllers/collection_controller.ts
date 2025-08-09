@@ -23,9 +23,18 @@ export default class CollectionController {
   async update({ params, request, response }: HttpContext) {
     try {
       const { id } = params
+      
+      // Validate that id is a valid number
+      const collectionId = Number.parseInt(id)
+      if (isNaN(collectionId)) {
+        return response.badRequest({
+          message: 'Invalid collection ID. ID must be a valid number.',
+        })
+      }
+      
       const data = request.only(['name', 'description', 'images'])
 
-      const collection = await this.collectionService.updateCollection(Number.parseInt(id), data)
+      const collection = await this.collectionService.updateCollection(collectionId, data)
       return response.ok(collection)
     } catch (error) {
       return response.internalServerError({
@@ -38,7 +47,16 @@ export default class CollectionController {
   async delete({ params, response }: HttpContext) {
     try {
       const { id } = params
-      const result = await this.collectionService.deleteCollection(Number.parseInt(id))
+      
+      // Validate that id is a valid number
+      const collectionId = Number.parseInt(id)
+      if (isNaN(collectionId)) {
+        return response.badRequest({
+          message: 'Invalid collection ID. ID must be a valid number.',
+        })
+      }
+      
+      const result = await this.collectionService.deleteCollection(collectionId)
       return response.ok(result)
     } catch (error) {
       return response.internalServerError({
@@ -63,7 +81,16 @@ export default class CollectionController {
   async getById({ params, response }: HttpContext) {
     try {
       const { id } = params
-      const collection = await this.collectionService.getCollectionById(Number.parseInt(id))
+      
+      // Validate that id is a valid number
+      const collectionId = Number.parseInt(id)
+      if (isNaN(collectionId)) {
+        return response.badRequest({
+          message: 'Invalid collection ID. ID must be a valid number.',
+        })
+      }
+      
+      const collection = await this.collectionService.getCollectionById(collectionId)
       return response.ok(collection)
     } catch (error) {
       return response.notFound({
@@ -106,7 +133,16 @@ export default class CollectionController {
   async getStats({ params, response }: HttpContext) {
     try {
       const { id } = params
-      const stats = await this.collectionService.getCollectionStats(Number.parseInt(id))
+      
+      // Validate that id is a valid number
+      const collectionId = Number.parseInt(id)
+      if (isNaN(collectionId)) {
+        return response.badRequest({
+          message: 'Invalid collection ID. ID must be a valid number.',
+        })
+      }
+      
+      const stats = await this.collectionService.getCollectionStats(collectionId)
       return response.ok(stats)
     } catch (error) {
       return response.internalServerError({
