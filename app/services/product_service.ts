@@ -61,16 +61,12 @@ export default class ProductService {
   }
 
   async getAllProducts() {
-    const products = await Product.query().whereNotNull('collection_id').preload('collection')
+    const products = await Product.query().preload('collection')
     return products
   }
 
   async getProductById(id: number) {
-    const product = await Product.query()
-      .where('id', id)
-      .whereNotNull('collection_id')
-      .preload('collection')
-      .firstOrFail()
+    const product = await Product.query().where('id', id).preload('collection').firstOrFail()
     return product
   }
 
@@ -118,8 +114,8 @@ export default class ProductService {
     const limit = paginationOptions.limit || 3
     const offset = (page - 1) * limit
 
-    // Build the query - only include products that have a collectionId
-    const query = Product.query().whereNotNull('collection_id').preload('collection')
+    // Build the query
+    const query = Product.query().preload('collection')
 
     // Get total count for pagination
     const totalQuery = query.clone()
