@@ -69,8 +69,6 @@ export default class Product extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 
-  @belongsTo(() => Collection, {
-    foreignKey: 'collection_id'
-  })
+  @belongsTo(() => Collection)
   declare collection: BelongsTo<typeof Collection>
 }
