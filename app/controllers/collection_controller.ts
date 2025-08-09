@@ -115,4 +115,42 @@ export default class CollectionController {
       })
     }
   }
+
+  async getCollectionsPaged({ request, response }: HttpContext) {
+    try {
+      const { page, limit } = request.qs()
+
+      const paginationOptions = {
+        page: page ? (() => {
+          const parsed = Number.parseInt(page)
+          return isNaN(parsed) ? 1 : parsed
+        })() : 1,
+        limit: limit ? (() => {
+          const parsed = Number.parseInt(limit)
+          return isNaN(parsed) ? 3 : parsed
+        })() : 3,
+      }
+
+      // Validate pagination parameters
+      if (paginationOptions.page < 1) {
+        return response.badRequest({
+          message: 'Page must be greater than 0',
+        })
+      }
+
+      if (paginationOptions.limit < 1 || paginationOptions.limit > 100) {
+        return response.badRequest({
+          message: 'Limit must be between 1 and 100',
+        })
+      }
+
+      const result = await this.collectionService.getCollectionsPaged(paginationOptions)
+      return response.ok(result)
+    } catch (error) {
+      return response.internalServerError({
+        message: 'Failed to fetch collections with pagination',
+        error: error.message,
+      })
+    }
+  }
 }

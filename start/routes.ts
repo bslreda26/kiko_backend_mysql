@@ -22,6 +22,7 @@ router
     router.post('/', '#controllers/collection_controller.create')
     router.get('/', '#controllers/collection_controller.getAll')
     router.get('/search', '#controllers/collection_controller.search')
+    router.get('/search-paged', '#controllers/collection_controller.getCollectionsPaged')
     router.get('/with-products', '#controllers/collection_controller.getWithProducts')
     router.get('/:id', '#controllers/collection_controller.getById')
     router.get('/:id/stats', '#controllers/collection_controller.getStats')

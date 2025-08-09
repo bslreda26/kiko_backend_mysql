@@ -11,6 +11,23 @@ interface SearchOptions {
   name?: string
 }
 
+interface PaginationOptions {
+  page?: number
+  limit?: number
+}
+
+interface PagedResult<T> {
+  data: T[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+    hasNext: boolean
+    hasPrev: boolean
+  }
+}
+
 @inject()
 export default class CollectionService {
   async createCollection(data: CollectionData) {
@@ -79,6 +96,36 @@ export default class CollectionService {
         totalProducts,
         totalValue,
         averagePrice,
+      },
+    }
+  }
+
+  async getCollectionsPaged(paginationOptions: PaginationOptions = {}): Promise<PagedResult<any>> {
+    const page = paginationOptions.page || 1
+    const limit = paginationOptions.limit || 3
+    const offset = (page - 1) * limit
+
+    // Get total count for pagination
+    const total = await Collection.query().count('* as total')
+    const totalCount = total[0].$extras.total
+
+    // Build the query with pagination
+    const data = await Collection.query().offset(offset).limit(limit).preload('products')
+
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(totalCount / limit)
+    const hasNext = page < totalPages
+    const hasPrev = page > 1
+
+    return {
+      data,
+      pagination: {
+        page,
+        limit,
+        total: totalCount,
+        totalPages,
+        hasNext,
+        hasPrev,
       },
     }
   }
