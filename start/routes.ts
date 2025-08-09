@@ -36,6 +36,7 @@ router
     router.post('/', '#controllers/product_controller.create')
     router.get('/', '#controllers/product_controller.getAll')
     router.get('/search', '#controllers/product_controller.search')
+    router.get('/search-paged', '#controllers/product_controller.getProductByCriteriaPaged')
     router.get('/by-price-range', '#controllers/product_controller.getByPriceRange')
     router.get('/by-collection/:collectionId', '#controllers/product_controller.getByCollection')
     router.get('/:id', '#controllers/product_controller.getById')

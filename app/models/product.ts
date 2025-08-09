@@ -16,27 +16,34 @@ export default class Product extends BaseModel {
 
   @column({
     serialize: (value: string) => {
-      if (!value) return null
+      if (!value) return []
       try {
-        return JSON.parse(value)
+        const parsed = JSON.parse(value)
+        return Array.isArray(parsed) ? parsed : [parsed]
       } catch {
-        return value
+        return [value]
       }
     },
     prepare: (value: any) => {
-      if (typeof value === 'object' && value !== null) {
+      if (Array.isArray(value)) {
         return JSON.stringify(value)
       }
-      return value
+      if (typeof value === 'object' && value !== null) {
+        return JSON.stringify([value])
+      }
+      if (value) {
+        return JSON.stringify([value])
+      }
+      return JSON.stringify([])
     }
   })
-  declare image: string | object
+  declare image: string[] | object[]
 
   @column({
     serialize: (value: string) => {
       if (!value) return null
       try {
-        return JSON.parse(value)
+        return JSON.parse(value) 
       } catch {
         return value
       }

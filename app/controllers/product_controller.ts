@@ -17,11 +17,15 @@ export default class ProductController {
         'collectionId',
       ])
 
-      // Basic validation for base64 image format
-      if (data.image && !this.isValidBase64Image(data.image)) {
-        return response.badRequest({
-          message: 'Invalid image format. Expected base64 encoded image.',
-        })
+      // Parse and validate image data
+      if (data.image) {
+        const parsedImages = this.parseImageData(data.image)
+        if (!this.isValidImageArray(parsedImages)) {
+          return response.badRequest({
+            message: 'Invalid image format. Expected array of base64 encoded images or URLs.',
+          })
+        }
+        data.image = parsedImages
       }
 
       const product = await this.productService.createProduct(data)
@@ -40,9 +44,52 @@ export default class ProductController {
     return base64ImageRegex.test(imageString) || imageString.startsWith('http')
   }
 
+  private parseImageData(imageData: any): any[] {
+    // If it's already an array, return it
+    if (Array.isArray(imageData)) {
+      return imageData
+    }
+    
+    // If it's a string, try to parse it as JSON
+    if (typeof imageData === 'string') {
+      try {
+        const parsed = JSON.parse(imageData)
+        return Array.isArray(parsed) ? parsed : [parsed]
+      } catch {
+        // If it's not JSON, treat it as a single image
+        return [imageData]
+      }
+    }
+    
+    // If it's a single object or other type, wrap it in an array
+    return [imageData]
+  }
+
+  private isValidImageArray(images: any[]): boolean {
+    if (!Array.isArray(images) || images.length === 0) {
+      return false
+    }
+    
+    return images.every((image) => {
+      if (typeof image !== 'string') {
+        return false
+      }
+      return this.isValidBase64Image(image)
+    })
+  }
+
   async update({ params, request, response }: HttpContext) {
     try {
       const { id } = params
+      
+      // Validate that id is a valid number
+      const productId = Number.parseInt(id)
+      if (isNaN(productId)) {
+        return response.badRequest({
+          message: 'Invalid product ID. ID must be a valid number.',
+        })
+      }
+      
       const data = request.only([
         'title',
         'description',
@@ -52,14 +99,18 @@ export default class ProductController {
         'collectionId',
       ])
 
-      // Basic validation for base64 image format
-      if (data.image && !this.isValidBase64Image(data.image)) {
-        return response.badRequest({
-          message: 'Invalid image format. Expected base64 encoded image.',
-        })
+      // Parse and validate image data
+      if (data.image) {
+        const parsedImages = this.parseImageData(data.image)
+        if (!this.isValidImageArray(parsedImages)) {
+          return response.badRequest({
+            message: 'Invalid image format. Expected array of base64 encoded images or URLs.',
+          })
+        }
+        data.image = parsedImages
       }
 
-      const product = await this.productService.updateProduct(Number.parseInt(id), data)
+      const product = await this.productService.updateProduct(productId, data)
       return response.ok(product)
     } catch (error) {
       return response.internalServerError({
@@ -72,7 +123,16 @@ export default class ProductController {
   async delete({ params, response }: HttpContext) {
     try {
       const { id } = params
-      const result = await this.productService.deleteProduct(Number.parseInt(id))
+      
+      // Validate that id is a valid number
+      const productId = Number.parseInt(id)
+      if (isNaN(productId)) {
+        return response.badRequest({
+          message: 'Invalid product ID. ID must be a valid number.',
+        })
+      }
+      
+      const result = await this.productService.deleteProduct(productId)
       return response.ok(result)
     } catch (error) {
       return response.internalServerError({
@@ -97,7 +157,16 @@ export default class ProductController {
   async getById({ params, response }: HttpContext) {
     try {
       const { id } = params
-      const product = await this.productService.getProductById(Number.parseInt(id))
+      
+      // Validate that id is a valid number
+      const productId = Number.parseInt(id)
+      if (isNaN(productId)) {
+        return response.badRequest({
+          message: 'Invalid product ID. ID must be a valid number.',
+        })
+      }
+      
+      const product = await this.productService.getProductById(productId)
       return response.ok(product)
     } catch (error) {
       return response.notFound({
@@ -110,9 +179,16 @@ export default class ProductController {
   async getByCollection({ params, response }: HttpContext) {
     try {
       const { collectionId } = params
-      const products = await this.productService.getProductsByCollection(
-        Number.parseInt(collectionId)
-      )
+      
+      // Validate that collectionId is a valid number
+      const collectionIdNum = Number.parseInt(collectionId)
+      if (isNaN(collectionIdNum)) {
+        return response.badRequest({
+          message: 'Invalid collection ID. Collection ID must be a valid number.',
+        })
+      }
+      
+      const products = await this.productService.getProductsByCollection(collectionIdNum)
       return response.ok(products)
     } catch (error) {
       return response.internalServerError({
@@ -127,9 +203,18 @@ export default class ProductController {
       const { minPrice, maxPrice, collectionId, title } = request.qs()
 
       const options = {
-        minPrice: minPrice ? Number.parseInt(minPrice) : undefined,
-        maxPrice: maxPrice ? Number.parseInt(maxPrice) : undefined,
-        collectionId: collectionId ? Number.parseInt(collectionId) : undefined,
+        minPrice: minPrice ? (() => {
+          const parsed = Number.parseInt(minPrice)
+          return isNaN(parsed) ? undefined : parsed
+        })() : undefined,
+        maxPrice: maxPrice ? (() => {
+          const parsed = Number.parseInt(maxPrice)
+          return isNaN(parsed) ? undefined : parsed
+        })() : undefined,
+        collectionId: collectionId ? (() => {
+          const parsed = Number.parseInt(collectionId)
+          return isNaN(parsed) ? undefined : parsed
+        })() : undefined,
         title: title as string,
       }
 
@@ -153,14 +238,59 @@ export default class ProductController {
         })
       }
 
-      const products = await this.productService.getProductsByPriceRange(
-        Number.parseInt(minPrice),
-        Number.parseInt(maxPrice)
-      )
+      // Validate that prices are valid numbers
+      const minPriceNum = Number.parseInt(minPrice)
+      const maxPriceNum = Number.parseInt(maxPrice)
+      
+      if (isNaN(minPriceNum) || isNaN(maxPriceNum)) {
+        return response.badRequest({
+          message: 'Both minPrice and maxPrice must be valid numbers',
+        })
+      }
+
+      const products = await this.productService.getProductsByPriceRange(minPriceNum, maxPriceNum)
       return response.ok(products)
     } catch (error) {
       return response.internalServerError({
         message: 'Failed to fetch products by price range',
+        error: error.message,
+      })
+    }
+  }
+
+  async getProductByCriteriaPaged({ request, response }: HttpContext) {
+    try {
+      const { page, limit } = request.qs()
+
+      const paginationOptions = {
+        page: page ? (() => {
+          const parsed = Number.parseInt(page)
+          return isNaN(parsed) ? 1 : parsed
+        })() : 1,
+        limit: limit ? (() => {
+          const parsed = Number.parseInt(limit)
+          return isNaN(parsed) ? 3 : parsed
+        })() : 3,
+      }
+
+      // Validate pagination parameters
+      if (paginationOptions.page < 1) {
+        return response.badRequest({
+          message: 'Page must be greater than 0',
+        })
+      }
+
+      if (paginationOptions.limit < 1 || paginationOptions.limit > 100) {
+        return response.badRequest({
+          message: 'Limit must be between 1 and 100',
+        })
+      }
+
+      const result = await this.productService.getProductByCriteriaPaged(paginationOptions)
+      return response.ok(result)
+    } catch (error) {
+      return response.internalServerError({
+        message: 'Failed to fetch products with pagination',
         error: error.message,
       })
     }

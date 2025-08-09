@@ -4,7 +4,7 @@ import { inject } from '@adonisjs/core'
 interface ProductData {
   title: string
   description: string
-  image: string | object
+  image: string[] | object[]
   dimensions: object
   price?: number
   collectionId: number
@@ -15,6 +15,23 @@ interface SearchOptions {
   maxPrice?: number
   collectionId?: number
   title?: string
+}
+
+interface PaginationOptions {
+  page?: number
+  limit?: number
+}
+
+interface PagedResult<T> {
+  data: T[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+    hasNext: boolean
+    hasPrev: boolean
+  }
 }
 
 @inject()
@@ -88,5 +105,44 @@ export default class ProductService {
       .where('price', '<=', maxPrice)
       .preload('collection')
     return products
+  }
+
+  async getProductByCriteriaPaged(
+    paginationOptions: PaginationOptions = {}
+  ): Promise<PagedResult<any>> {
+    const page = paginationOptions.page || 1
+    const limit = paginationOptions.limit || 3
+    const offset = (page - 1) * limit
+
+    // Build the query
+    const query = Product.query().preload('collection')
+
+    // Get total count for pagination
+    const totalQuery = query.clone()
+    const total = await totalQuery.count('* as total')
+    const totalCount = total[0].$extras.total
+
+    // Apply pagination
+    query.offset(offset).limit(limit)
+
+    // Execute the query
+    const data = await query
+
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(totalCount / limit)
+    const hasNext = page < totalPages
+    const hasPrev = page > 1
+
+    return {
+      data,
+      pagination: {
+        page,
+        limit,
+        total: totalCount,
+        totalPages,
+        hasNext,
+        hasPrev,
+      },
+    }
   }
 }
