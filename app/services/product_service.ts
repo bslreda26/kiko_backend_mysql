@@ -113,19 +113,12 @@ export default class ProductService {
     const limit = paginationOptions.limit || 3
     const offset = (page - 1) * limit
 
-    // Build the query
-    const query = Product.query()
-
     // Get total count for pagination
-    const totalQuery = query.clone()
-    const total = await totalQuery.count('* as total')
+    const total = await Product.query().count('* as total')
     const totalCount = total[0].$extras.total
 
-    // Apply pagination
-    query.offset(offset).limit(limit)
-
-    // Execute the query
-    const data = await query
+    // Build the query with pagination
+    const data = await Product.query().offset(offset).limit(limit).preload('collection')
 
     // Calculate pagination metadata
     const totalPages = Math.ceil(totalCount / limit)
