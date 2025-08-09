@@ -103,7 +103,6 @@ export default class ProductService {
     const products = await Product.query()
       .where('price', '>=', minPrice)
       .where('price', '<=', maxPrice)
-      .preload('collection')
     return products
   }
 
@@ -115,7 +114,7 @@ export default class ProductService {
     const offset = (page - 1) * limit
 
     // Build the query
-    const query = Product.query().preload('collection')
+    const query = Product.query()
 
     // Get total count for pagination
     const totalQuery = query.clone()
